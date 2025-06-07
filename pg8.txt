@@ -1,0 +1,40 @@
+pip install gensim
+!pip install --upgrade numpy scipy thinc tsfresh
+!pip install --force-reinstall "numpy<2.0,>=1.18.5" "scipy<1.14.0,>=1.7.0" "gensim==4.3.3" "thinc<8.4.0,>=8.3.4" "spacy==3.8.5"
+!pip install "numpy<2.0" "scipy<1.14.0" "gensim==4.3.3" --force-reinstall
+
+
+#program-8
+#Run this in seperate cell
+#pip install langchain cohere langchain-community google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+
+#Mount Google Drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+file_path = '/content/drive/MyDrive/Genai/Text1.txt'
+with open(file_path, 'r') as file:
+    document_text = file.read()
+
+import os
+from langchain.llms import Cohere
+os.environ["COHERE_API_KEY"] = "pImuG7G7aSCJEc3bVhFzdljeEguEaupI1IuJw0W"
+llm = Cohere(cohere_api_key=os.getenv("COHERE_API_KEY"))
+
+from langchain.prompts import PromptTemplate
+#Add capital F
+prompt = PromptTemplate(
+    input_variables=["document"],
+    template="""
+You are a helpful assistant.
+Given the following document, summarize it in **bullet points**:
+---
+{document}
+---
+Summary:
+"""
+)
+from langchain.chains import LLMChain
+chain = LLMChain(llm=llm, prompt=prompt)
+response = chain.run(document=document_text)
+print(response)

@@ -1,0 +1,26 @@
+pip install gensim
+!pip install --upgrade numpy scipy thinc tsfresh
+!pip install --force-reinstall "numpy<2.0,>=1.18.5" "scipy<1.14.0,>=1.7.0" "gensim==4.3.3" "thinc<8.4.0,>=8.3.4" "spacy==3.8.5"
+!pip install "numpy<2.0" "scipy<1.14.0" "gensim==4.3.3" --force-reinstall
+
+#Program-6
+#pip install transformers torch
+#if transformer gives error then run in seperate cell
+from transformers import pipeline
+
+sentiment_pipeline = pipeline("sentiment-analysis")
+
+input_sentences = [
+    "The new phone I bought is absolutely amazing!",
+    "Worst customer service ever. I'm never coming back.",
+    "The experience was average, nothing special.",
+    "Fast delivery and the packaging was perfect.",
+    "The product broke within two days. Very disappointed."
+]
+
+results = sentiment_pipeline(input_sentences)
+
+print("Sentiment Analysis Results:\n")
+for sentence, result in zip(input_sentences, results):
+    print(f"Input Sentence: {sentence}")
+    print(f"Predicted Sentiment: {result['label']}, Confidence Score: {result['score']:.2f}\n")

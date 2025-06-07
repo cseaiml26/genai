@@ -1,0 +1,55 @@
+pip install gensim
+!pip install --upgrade numpy scipy thinc tsfresh
+!pip install --force-reinstall "numpy<2.0,>=1.18.5" "scipy<1.14.0,>=1.7.0" "gensim==4.3.3" "thinc<8.4.0,>=8.3.4" "spacy==3.8.5"
+!pip install "numpy<2.0" "scipy<1.14.0" "gensim==4.3.3" --force-reinstall
+
+#program 3
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
+import numpy as np
+from gensim.models import Word2Vec
+
+medical_corpus = [
+    "The patient was diagnosed with diabetes and hypertension.",
+    "MRI scans reveal abnormalities in the brain tissue.",
+    "The treatment involves antibiotics and regular monitoring.",
+    "Symptoms include fever, fatigue, and muscle pain.",
+    "The vaccine is effective against several viral infections.",
+    "Doctors recommend physical therapy for recovery.",
+    "The clinical trial results were published in the journal.",
+    "The surgeon performed a minimally invasive procedure.",
+    "The prescription includes pain relievers and anti-inflammatory drugs.",
+    "The diagnosis confirmed a rare genetic disorder."
+]
+processed_corpus = [sentence.lower().split() for sentence in medical_corpus]
+model = Word2Vec(sentences=processed_corpus, vector_size=100, window=5, min_count=1, workers=4, epochs=50)
+
+words = list(model.wv.index_to_key)
+embeddings = np.array([model.wv[word] for word in words])
+
+tsne = TSNE(n_components=2, random_state=42, perplexity=5)
+tsne_result = tsne.fit_transform(embeddings)
+
+plt.figure(figsize=(10, 8))
+plt.scatter(tsne_result[:, 0], tsne_result[:, 1], color="blue")
+
+for i, word in enumerate(words):
+    plt.text(tsne_result[i, 0] + 0.02, tsne_result[i, 1] + 0.02, word, fontsize=12)
+
+plt.title("Word Embeddings Visualization (Medical Domain)")
+plt.xlabel("Dimension 1")
+plt.ylabel("Dimension 2")
+plt.grid(True)
+
+plt.show()
+def find_similar_words(input_word, top_n=5):
+    try:
+        similar_words = model.wv.most_similar(input_word, topn=top_n)
+        print(f"Words similar to '{input_word}':")
+        for word, similarity in similar_words:
+            print(f"  {word} ({similarity:.2f})")
+    except KeyError:
+        print(f"'{input_word}' not found in vocabulary.")
+
+find_similar_words("treatment")
+find_similar_words("vaccine")

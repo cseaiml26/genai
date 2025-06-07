@@ -1,0 +1,18 @@
+pip install gensim
+!pip install --upgrade numpy scipy thinc tsfresh
+!pip install --force-reinstall "numpy<2.0,>=1.18.5" "scipy<1.14.0,>=1.7.0" "gensim==4.3.3" "thinc<8.4.0,>=8.3.4" "spacy==3.8.5"
+!pip install "numpy<2.0" "scipy<1.14.0" "gensim==4.3.3" --force-reinstall
+
+#Program-7
+pip install transformers torch
+from transformers import pipeline
+
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+
+long_text = """
+The Hugging Face Transformers library provides a simple and consistent API for using a wide variety of pre-trained models for natural language processing tasks such as text classification, question answering, and summarization. One of its most powerful features is the pipeline abstraction, which allows users to perform these tasks with just a few lines of code. Summarization is the task of shortening a long document while preserving its key information and overall meaning.
+"""
+
+summary = summarizer(long_text, max_length=100, min_length=30, do_sample=False)
+print("Summary:", summary[0]['summary_text'])
+ 

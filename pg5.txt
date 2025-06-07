@@ -1,0 +1,33 @@
+pip install gensim
+!pip install --upgrade numpy scipy thinc tsfresh
+!pip install --force-reinstall "numpy<2.0,>=1.18.5" "scipy<1.14.0,>=1.7.0" "gensim==4.3.3" "thinc<8.4.0,>=8.3.4" "spacy==3.8.5"
+!pip install "numpy<2.0" "scipy<1.14.0" "gensim==4.3.3" --force-reinstall
+
+
+#program 5
+import random
+import gensim.downloader as api
+
+word_vectors = api.load("glove-wiki-gigaword-100")
+
+def get_similar(seed, top_n=5):
+    try:
+        return [w[0] for w in word_vectors.most_similar(seed, topn=top_n)]
+    except KeyError:
+        return []
+
+def generate_sentence(seed, sims):
+    templates = [
+        f"The {seed} was surrounded by {sims[0]} and {sims[1]}.",
+        f"People associate {seed} with {sims[2]} and {sims[3]}.",
+        f"In the land of {seed}, {sims[4]} was common.",
+        f"A story about {seed} includes {sims[1]} and {sims[3]}.",
+    ]
+    return random.choice(templates)
+
+def generate_paragraph(seed):
+    sims = get_similar(seed)
+    return " ".join(generate_sentence(seed, sims) for _ in range(4)) if sims else "Try another word."
+
+seed_word = input("Enter seed word: ")
+print("\nGenerated Paragraph:\n", generate_paragraph(seed_word))

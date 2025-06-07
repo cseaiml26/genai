@@ -1,0 +1,43 @@
+pip install gensim
+!pip install --upgrade numpy scipy thinc tsfresh
+!pip install --force-reinstall "numpy<2.0,>=1.18.5" "scipy<1.14.0,>=1.7.0" "gensim==4.3.3" "thinc<8.4.0,>=8.3.4" "spacy==3.8.5"
+!pip install "numpy<2.0" "scipy<1.14.0" "gensim==4.3.3" --force-reinstall
+
+
+#program 4
+import nltk, string
+import gensim.downloader as api
+from nltk.tokenize import word_tokenize
+from transformers import pipeline
+
+nltk.download('punkt_tab')
+
+
+nltk.download('punkt')
+word_vectors = api.load("glove-wiki-gigaword-100")
+generator = pipeline("text-generation", model="gpt2")
+
+def enrich_prompt(prompt, keyword):
+    words = word_tokenize(prompt)
+    enriched = []
+    for w in words:
+        clean = w.lower().strip(string.punctuation)
+        if clean == keyword.lower():
+            try:
+                replacement = word_vectors.most_similar(clean, topn=1)[0][0]
+                enriched.append(replacement)
+                continue
+            except KeyError:
+                pass
+        enriched.append(w)
+    return " ".join(enriched)
+
+def generate(prompt):
+    return generator(prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
+
+original = "Who is king."
+keyword = "king"
+enriched = enrich_prompt(original, keyword)
+
+print("Original Response:\n", generate(original))
+print("\nEnriched Response:\n", generate(enriched))
