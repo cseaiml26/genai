@@ -1,0 +1,21 @@
+from pydantic import BaseModel
+import wikipedia
+
+# Define a basic output schema
+class Institution(BaseModel):
+    name: str
+    summary: str
+
+# Function to fetch summary
+def get_institution_details(name: str) -> Institution:
+    try:
+        summary = wikipedia.summary(name, sentences=3)
+    except:
+        summary = "Summary not available."
+    return Institution(name=name, summary=summary)
+
+# Main block
+if _name_ == "_main_":
+    name = input("Enter institution name: ")
+    info = get_institution_details(name)
+    print(info.model_dump_json(indent=2))v
